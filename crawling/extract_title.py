@@ -22,10 +22,13 @@ for i in items:
     # 원상 복구
     title = " ".join(split_title)
 
+    # &amp;를 &로 변환
+    title = title.replace("&amp;", "&")
+
     titles.append(title)
 
 # 추출한 title을 txt 파일에 저장
-with open("titles_without_vhs.txt", "w", encoding="utf-8") as f:
+with open("cleaned_title.txt", "w", encoding="utf-8") as f:
     for title in titles:
         f.write(f"{title}\n")
 
