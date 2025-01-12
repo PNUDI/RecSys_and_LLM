@@ -8,3 +8,9 @@ repos:
     hooks:
       - id: isort
         name: isort (python)
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.1.0  
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+        type: commit-msg
