@@ -1,5 +1,5 @@
 import streamlit as st
-from pages.components import rec_line, rec_main
+from front.components.recommend_main import rec_line, rec_main  # 수정된 부분
 from pyparsing import empty
 
 st.set_page_config(initial_sidebar_state="collapsed", layout="wide")

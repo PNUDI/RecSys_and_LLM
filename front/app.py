@@ -1,6 +1,6 @@
 import streamlit as st
 from pyparsing import empty
-from utils import init_session_state
+from front.utils.session_utils import init_session_state
 
 st.set_page_config(initial_sidebar_state="collapsed", layout="wide")
 empty1, con1, empty2 = st.columns([0.2, 1.2, 0.2])  # title

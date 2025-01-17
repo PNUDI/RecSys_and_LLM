@@ -1,37 +1,27 @@
 # pages/chat_page.py
 
 import streamlit as st
+from front.components.pipeline_manager import set_pipeline
+from front.components.conversation_manager import (
+    save_conversation,
+    load_conversation,
+)
+from front.components.response_generator import get_unicrs_response
+from front.utils.session_utils import (
+    check_login,
+    initialize_conversations,
+    initialize_saved_conversations,
+    initialize_pipeline,
+    initialize_feedback_submitted,
+)
+from front.utils.style_utils import load_styles
 
 ########################################
 # (예시) set_pipeline, 더미 모듈/객체 설정
 ########################################
-unicrs_rec = "UniCRS_REC"  # Dummy
-unicrs_gen = "UniCRS_GEN"  # Dummy
-gpt_gen = "GPT_GEN"  # Dummy
-
-
-def set_pipeline(flag, rec_module, gen_module):
-    """flag, rec_module, gen_module에 따라 적절한 Pipeline 객체를 생성 (더미)."""
-    if flag.lower() == "blank":
-        pipeline = "FillBlankPipeline"
-    elif flag.lower() == "expansion":
-        pipeline = "ExpansionPipeline"
-    elif flag.lower() == "gpt":
-        pipeline = "GptPipeline"
-    else:
-        pipeline = "DefaultUniCRS"
-    return pipeline
-
-
-############################################
-# 1) UniCRS/GPT 등으로 응답을 만드는 로직
-############################################
-def get_unicrs_response(user_message: str, pipeline) -> str:
-    """
-    파이프라인을 통해 더미 응답을 생성하는 함수.
-    (실제로는 pipeline을 호출해 결과를 반환)
-    """
-    return f"안녕하세요! 요청하신 내용에 대한 추천을 드릴게요. (파이프라인: {pipeline})"
+# unicrs_rec = "UniCRS_REC"  # Dummy
+# unicrs_gen = "UniCRS_GEN"  # Dummy
+# gpt_gen = "GPT_GEN"  # Dummy
 
 
 ########################
@@ -41,22 +31,13 @@ def main():
     st.set_page_config(initial_sidebar_state="collapsed", layout="wide")
 
     # 0. 로그인 여부 확인
-    if "user_id" not in st.session_state or st.session_state.user_id == "":
-        st.warning("로그인 상태가 아닙니다. 로그인 페이지로 이동합니다.")
-        st.switch_page("app.py")
+    if not check_login():
         return
-
-    # 1. 세션 초기화
-    if "conversations" not in st.session_state:
-        st.session_state.conversations = []
-    if "saved_conversations" not in st.session_state:
-        # 예: {"세션제목": [ {role:..., content:...}, ... ], ...}
-        st.session_state.saved_conversations = {}
-    if "pipeline" not in st.session_state:
-        st.session_state.pipeline = set_pipeline("", unicrs_rec, unicrs_gen)
-    if "feedback_submitted" not in st.session_state:
-        # 각 메시지 인덱스별로 좋아요/싫어요가 이미 눌렸는지 기록
-        st.session_state.feedback_submitted = {}
+    # 세션 초기화
+    initialize_conversations()
+    initialize_saved_conversations()
+    initialize_pipeline(set_pipeline("", "UniCRS_REC", "UniCRS_GEN"))
+    initialize_feedback_submitted()
 
     # -------------------------------------------------------
     # (A) 상단 - "모델 선택"을 가장 먼저(최상단) 배치
@@ -73,29 +54,17 @@ def main():
     )
     chosen_flag = model_options[selected_model_label]
     st.session_state.pipeline = set_pipeline(
-        chosen_flag, unicrs_rec, gpt_gen if chosen_flag == "gpt" else unicrs_gen
+        chosen_flag, "UniCRS_REC", "GPT_GEN" if chosen_flag == "gpt" else "UniCRS_GEN"
     )
 
     # -------------------------------------------------------
     # 상단 버튼들 (오른쪽 정렬)
     # -------------------------------------------------------
-    st.markdown(
-        """
-        <style>
-        .top-right-buttons {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 10px;
-            margin-top: -3rem; /* 모델 선택과 약간 겹치지 않게 조정 */
-            margin-bottom: 1rem;
-        }
-        </style>
-    """,
-        unsafe_allow_html=True,
-    )
+    # CSS 스타일 로드
+    load_styles()
 
-    st.markdown('<div class="top-right-buttons">', unsafe_allow_html=True)
+    # 상단 버튼들
+    # st.markdown('<div class="top-right-buttons">', unsafe_allow_html=True)
 
     # (A1) 메인 페이지 버튼
     # if st.button("메인 페이지로 돌아가기"):

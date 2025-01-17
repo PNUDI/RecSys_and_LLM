@@ -1,0 +1,11 @@
+/* app/assets/styles.css */
+
+/* 상단 버튼 스타일 */
+.top-right-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-top: -3rem; /* 모델 선택과 약간 겹치지 않게 조정 */
+    margin-bottom: 1rem;
+}
