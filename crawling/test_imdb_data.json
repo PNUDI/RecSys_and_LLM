@@ -1,0 +1,35 @@
+{
+    "1": {
+        "director": null,
+        "cast": [
+            "Marja Allen",
+            "Jean-Georges Vongerichten",
+            "Heather Graham",
+            "Diana Kang",
+            "Hugh Jackman"
+        ],
+        "poster_url": "https://m.media-amazon.com/images/M/MV5BOGMyNWE0NTktMzYzNy00NThjLTk5NTEtN2Q2M2U1NDlkZGNjXkEyXkFqcGc@._V1_QL75_UY562_CR319,0,380,562_.jpg"
+    },
+    "2": {
+        "director": "Reza Badiyi",
+        "cast": [
+            "Michael Houston King",
+            "Julie Harris",
+            "Tessie Santiago",
+            "Ruby Dee",
+            "Danny Nucci"
+        ],
+        "poster_url": "https://m.media-amazon.com/images/M/MV5BZjE3NTI3YzUtMTExZC00NzRlLWE1MWUtZGU5MzIxOTQ3YjA4XkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg"
+    },
+    "3": {
+        "director": "Ken Burns",
+        "cast": [
+            "Edward Herrmann",
+            "Philip Bosco",
+            "Julie Harris",
+            "Sab Shimono",
+            "William Cronon"
+        ],
+        "poster_url": "https://m.media-amazon.com/images/M/MV5BYmRhZTVmZTktYzY2Mi00N2Y5LWJhOTEtNzZhMDM4MGI3NzRhXkEyXkFqcGc@._V1_QL75_UX380_CR0,4,380,562_.jpg"
+    }
+}
