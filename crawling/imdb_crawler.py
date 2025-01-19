@@ -16,6 +16,7 @@ import time
 
 import requests
 from bs4 import BeautifulSoup
+from requests.exceptions import ConnectTimeout
 
 # 로그 설정
 logging.basicConfig(
@@ -122,7 +123,7 @@ def get_imdb_details(detail_url):
             "Chrome/87.0.4280.88 Safari/537.36"
         )
     }
-    resp = requests.get(detail_url, headers=headers)
+    resp = requests.get(detail_url, headers=headers, timeout=10)  # 타임아웃 설정
     if resp.status_code != 200:
         logging.error(f"Failed to access detail page: {detail_url}")
         return {"director": None, "cast": [], "poster_url": None}
@@ -179,29 +180,39 @@ def main():
         raw_title = raw_title.strip()
         logging.info(f"Processing item_number: {i}, title: {raw_title}")
 
-        detail_url = search_imdb(raw_title)
-        if not detail_url:
-            logging.warning(f"Skipping title: {raw_title}")
-            continue
+        try:
+            detail_url = search_imdb(raw_title)
+            if not detail_url:
+                logging.warning(f"Skipping title: {raw_title}")
+                continue
 
-        details = get_imdb_details(detail_url)
-        data[i] = {
-            "director": details["director"],
-            "cast": details["cast"],
-            "poster_url": details["poster_url"],
-        }
-        logging.info(f"Completed item_number: {i}")
+            details = get_imdb_details(detail_url)
+            data[i] = {
+                "director": details["director"],
+                "cast": details["cast"],
+                "poster_url": details["poster_url"],
+            }
+            logging.info(f"Completed item_number: {i}")
 
-        if i % 10 == 0 or i == len(titles):
-            part_num = i // 10
-            with open(
-                f"{DATA_FOLDER}/imdb_data_part_{part_num}.json", "w", encoding="utf-8"
-            ) as json_file:
-                json.dump(data, json_file, ensure_ascii=False, indent=4)
-            logging.info(f"Saved {DATA_FOLDER}/imdb_data_part_{part_num}.json")
-            data = {}
+            if i % 10 == 0 or i == len(titles):
+                part_num = i // 10
+                with open(
+                    f"{DATA_FOLDER}/imdb_data_part_{part_num}.json",
+                    "w",
+                    encoding="utf-8",
+                ) as json_file:
+                    json.dump(data, json_file, ensure_ascii=False, indent=4)
+                logging.info(f"Saved {DATA_FOLDER}/imdb_data_part_{part_num}.json")
+                data = {}
 
-        time.sleep(2)
+            time.sleep(1)
+
+        except ConnectTimeout:
+            logging.error(
+                f"Connection timed out for item_number: {i}, title: {raw_title}. Retrying in 5 seconds..."
+            )
+            time.sleep(5)
+            return main()
 
 
 if __name__ == "__main__":
