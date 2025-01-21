@@ -123,7 +123,7 @@ def get_imdb_details(detail_url):
             "Chrome/87.0.4280.88 Safari/537.36"
         )
     }
-    resp = requests.get(detail_url, headers=headers, timeout=10)  # 타임아웃 설정
+    resp = requests.get(detail_url, headers=headers)
     if resp.status_code != 200:
         logging.error(f"Failed to access detail page: {detail_url}")
         return {"director": None, "cast": [], "poster_url": None}
@@ -204,8 +204,6 @@ def main():
                     json.dump(data, json_file, ensure_ascii=False, indent=4)
                 logging.info(f"Saved {DATA_FOLDER}/imdb_data_part_{part_num}.json")
                 data = {}
-
-            time.sleep(1)
 
         except ConnectTimeout:
             logging.error(
