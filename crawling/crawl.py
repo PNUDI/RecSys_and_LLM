@@ -136,6 +136,10 @@ def main():
     # 각 요소의 텍스트 (키워드) 가져오기
     keywords = [element.text.strip() for element in elements]
 
+    with open("keywords.txt", "w", encoding="utf-8") as file:
+        for keyword in keywords:
+            file.write(f"{keyword}\n")
+
     driver.quit()
 
     # 병렬 처리

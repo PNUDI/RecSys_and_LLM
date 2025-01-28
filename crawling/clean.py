@@ -1,11 +1,12 @@
 import csv
+import json  # JSON 형식 사용
 from collections import defaultdict
 
 
 def clean_csv(input_csv, output_csv):
     """
     Cleans the input CSV by merging rows with the same Title and Description.
-    The Keywords are merged into a list.
+    The Keywords are merged into a list and saved as a JSON string.
     """
     # 중복 제거를 위한 딕셔너리
     data_dict = defaultdict(lambda: {"Keywords": set(), "Rating": None})
@@ -31,10 +32,8 @@ def clean_csv(input_csv, output_csv):
                     rating and rating > data_dict[key]["Rating"]
                 ):
                     data_dict[key]["Rating"] = rating
-            except:
-                print(
-                    f"error: {row["Keyword"]} / {row["Title"]} / {row["Description"]}"
-                )
+            except Exception as e:
+                print(f"Error processing row: {row}, Error: {e}")
                 continue
 
     # CSV 쓰기
@@ -48,7 +47,9 @@ def clean_csv(input_csv, output_csv):
                 {
                     "Title": title,
                     "Description": description,
-                    "Keywords": list(values["Keywords"]),  # Keywords를 리스트로 변환
+                    "Keywords": json.dumps(
+                        list(values["Keywords"])
+                    ),  # JSON 문자열로 저장
                     "Rating": values["Rating"],
                 }
             )
@@ -57,7 +58,6 @@ def clean_csv(input_csv, output_csv):
 
 
 if __name__ == "__main__":
-    # 사용 예시
-    input_csv = "movies_with_keywords.csv"
-    output_csv = "cleaned_movies_with_keywords.csv"
+    input_csv = "data/original.csv"
+    output_csv = "data/refined.csv"
     clean_csv(input_csv, output_csv)
