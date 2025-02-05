@@ -10,6 +10,22 @@ wget https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_v2/categoryFiles/Mo
 wget https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_v2/metaFiles2/meta_Movies_and_TV.json.gz  # download metadata
 gzip -d meta_Movies_and_TV.json.gz
 ```
+### Download and make dir
+
+```
+wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2204-8.0.4.tgz
+tar -xvzf mongodb-linux-x86_64-ubuntu2204-8.0.4.tgz
+mkdir -p ~/mongodb/data/db
+mkdir -p ~/mongodb/logs
+```
+
+### Run MongoDB
+
+```
+./mongodb-linux-x86_64-ubuntu2204-8.0.4/bin/mongod --dbpath ~/mongodb/data/db --logpath ~/mongodb/logs/mongod.log --port 27017
+./mongodb-linux-x86_64-ubuntu2204-8.0.4/bin/mongod --dbpath ~/mongodb/data/db --logpath ~/mongodb/logs/mongod.log --port 27017 --fork # run background
+./mongodb-linux-x86_64-ubuntu2204-8.0.4/bin/mongo --port 27017 # connect
+```
 
 ### Preprocess and insert DB
 
