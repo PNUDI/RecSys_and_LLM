@@ -26,3 +26,4 @@ if __name__ == "__main__":
         insert_json_with_item()
         insert_json_with_review()
         insert_json_with_user()
+        insert_json_with_imdb()

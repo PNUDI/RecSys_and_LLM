@@ -64,3 +64,19 @@ def insert_json_with_user():
             print(f"Document with _id={key} inserted successfully.")
         except Exception as e:
             print(f"Error inserting document with _id={key}: {e}")
+
+def insert_json_with_imdb():
+    mycoll = connect_mongodb("items", "item")
+
+    with open("data/merged_imdb_data.json", "r", encoding="utf-8") as file:
+        json_data = json.load(file)
+
+    for key, new_data in json_data.items():
+        existing_data = mycoll.find_one({"_id": key})
+        if existing_data:
+            merged_data = {**new_data, **existing_data}
+            mycoll.update_one({"_id": key}, {"$set": merged_data})
+        else:
+            print(key)
+            new_data["_id"] = key
+            mycoll.insert_one(new_data)
