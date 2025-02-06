@@ -87,8 +87,14 @@ python main.py
   "date": "",
   "price": "",
   "asin": "0001527665",
-  "imageURL": [],
+  "imageURL": [], # original data
   "imageURLHighRes": []
+  "cast": [
+            "Don Richardson", # imdb data cast
+            "Rolf Forsberg"
+        ],
+  "director": "Rolf Forsberg", #imdb data director
+  "poster_url": "aaaa.jpg" # imdb poster_url
 }
 ```
 ## Review Document Structure
