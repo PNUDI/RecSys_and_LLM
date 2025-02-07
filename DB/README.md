@@ -25,7 +25,8 @@ tar -xvzf mongosh-2.3.9-linux-x64.tgz
 ### Run MongoDB and connect DataBase
 
 ```
-./mongodb-linux-x86_64-ubuntu2204-8.0.4/bin/mongod --dbpath ~/mongodb/data/db --logpath ~/mongodb/logs/mongod.log --port 27017
+./mongodb-linux-x86_64-ubuntu2204-8.0.4/bin/mongod --dbpath ~/mongodb/data/db --logpath ~/mongodb/logs/mongod.log --port 27017 --bind_ip_all # namho
+./mongodb-linux-x86_64-ubuntu2204-8.0.4/bin/mongod --dbpath ~/mongodb/data/db --logpath ~/mongodb/logs/mongod.log --port 27017 # other user
 cd mongosh-2.3.9-linux-x64
 cd bln
 ./mongosh
