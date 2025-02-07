@@ -18,14 +18,17 @@ wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2204-8.0.4.tgz
 tar -xvzf mongodb-linux-x86_64-ubuntu2204-8.0.4.tgz
 mkdir -p ~/mongodb/data/db
 mkdir -p ~/mongodb/logs
+wget https://downloads.mongodb.com/compass/mongosh-2.3.9-linux-x64.tgz
+tar -xvzf mongosh-2.3.9-linux-x64.tgz
 ```
 
-### Run MongoDB
+### Run MongoDB and connect DataBase
 
 ```
 ./mongodb-linux-x86_64-ubuntu2204-8.0.4/bin/mongod --dbpath ~/mongodb/data/db --logpath ~/mongodb/logs/mongod.log --port 27017
-./mongodb-linux-x86_64-ubuntu2204-8.0.4/bin/mongod --dbpath ~/mongodb/data/db --logpath ~/mongodb/logs/mongod.log --port 27017 --fork # run background
-./mongodb-linux-x86_64-ubuntu2204-8.0.4/bin/mongo --port 27017 # connect
+cd mongosh-2.3.9-linux-x64
+cd bln
+./mongosh
 ```
 
 ### Preprocess and insert DB
