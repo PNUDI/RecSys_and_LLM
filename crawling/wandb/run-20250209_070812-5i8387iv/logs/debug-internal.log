@@ -1,0 +1,8 @@
+{"time":"2025-02-09T07:08:12.7007769Z","level":"INFO","msg":"stream: starting","core version":"0.19.6","symlink path":"/home/jiyoon/dev/RecSys_and_LLM/crawling/wandb/run-20250209_070812-5i8387iv/logs/debug-core.log"}
+{"time":"2025-02-09T07:08:12.816842375Z","level":"INFO","msg":"created new stream","id":"5i8387iv"}
+{"time":"2025-02-09T07:08:12.816901651Z","level":"INFO","msg":"stream: started","id":"5i8387iv"}
+{"time":"2025-02-09T07:08:12.817033612Z","level":"INFO","msg":"writer: Do: started","stream_id":"5i8387iv"}
+{"time":"2025-02-09T07:08:12.817163171Z","level":"INFO","msg":"sender: started","stream_id":"5i8387iv"}
+{"time":"2025-02-09T07:08:12.8173315Z","level":"INFO","msg":"handler: started","stream_id":"5i8387iv"}
+{"time":"2025-02-09T07:08:13.145452195Z","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-02-09T07:08:13.41877155Z","level":"INFO","msg":"Pausing system monitor"}
