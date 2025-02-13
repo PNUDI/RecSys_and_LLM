@@ -115,3 +115,37 @@ python main.py
   }
 }
 ```
+## conversation Document Structure
+```
+{
+  "_id": "string",
+  "conversation_id": "1",
+  "conversation_title": "Favorite Movies",
+  "user_id": "user_1001",
+  "dialog": [
+    {
+      "text": "I love watching Inception!",
+      "speaker": "usr",
+      "feedback": "interesting",
+      "entity": "Inception",
+      "date_time": "2025-01-13-19:30:25"
+    },
+    {
+      "text": "Inception is a great movie!",
+      "speaker": "sys",
+      "feedback": "positive",
+      "entity": "Inception",
+      "date_time": "2025-01-13-19:30:30"
+    }
+  ]
+}
+```
+## conversation Insert
+# MongoDB 연결 (기본적으로 로컬호스트 사용)
+```
+# 연결은 아래와 같이하고 삽입은 conversation Docment Structure와 동일한 형태로 json파일 만들어서 변수에 저장하고 저장하면 됩니다. 
+client = MongoClient("mongodb://localhost:27017/")
+db = client["items"]  # 데이터베이스 선택
+conversation_coll = db["conversation"]  # 컬렉션 선택
+conversation_coll.insert_one(new_conversation)
+```
