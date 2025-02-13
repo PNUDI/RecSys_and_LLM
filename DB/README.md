@@ -141,7 +141,6 @@ python main.py
 }
 ```
 ## conversation Insert
-# MongoDB 연결 (기본적으로 로컬호스트 사용)
 ```
 # 연결은 아래와 같이하고 삽입은 conversation Docment Structure와 동일한 형태로 json파일 만들어서 변수에 저장하고 저장하면 됩니다. 
 client = MongoClient("mongodb://localhost:27017/")
