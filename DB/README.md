@@ -64,6 +64,7 @@ python main.py
     },
     ...
   ]
+  "UserName": "adsadsadsad" #UserName
 }
 ```
 ## Item Document Structure
@@ -106,12 +107,12 @@ python main.py
 {
   "_id": "1", # ItemNum
   "review": {
-    "1": "really happy they got evangelised .. spoiler alert==happy ending liked…", # UserNum: Review
-    "237431": "The movie was a good synopsis of the main parts of the book. Just shor…"
+    "UserName": "really happy they got evangelised .. spoiler alert==happy ending liked…", # UserNum: Review
+    "UserName": "The movie was a good synopsis of the main parts of the book. Just shor…"
   },
   "summary": {
-    "1": "great", # UserNum: Summary
-    "237431": "Synopsis"
+    "UserName": "great", # UserNum: Summary
+    "UserName": "Synopsis"
   }
 }
 ```
