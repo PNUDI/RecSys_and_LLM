@@ -103,6 +103,45 @@ def predict(
         if int(dataset.id2token("item_id", ele).item()) not in missing_list
     ][: topk // 2]
 
+def gsasrec_load_model():
+    repo_id = "PNUDI/gSASRec"
+
+    model_file = hf_hub_download(
+                repo_id=repo_id, filename="pytorch_model.bin", repo_type="model"
+            )
+    config_file = hf_hub_download(
+                repo_id=repo_id, filename="config.json", repo_type="model"
+            )
+    with open(config_file, "r") as f:
+        config_data = json.load(f)
+    config = argparse.Namespace(**config_data)
+
+    model = build_model(config)
+
+    model.load_state_dict(torch.load(model_file, map_location='cpu'))
+    return model, config
+
+def tisasrec_load_model():
+    repo_id = "PNUDI/TiSASRec"  # 업로드한 모델의 repo ID
+
+    model_file = hf_hub_download(
+        repo_id=repo_id, filename="pytorch_model.bin", repo_type="model"
+    )
+    config_file = hf_hub_download(
+        repo_id=repo_id, filename="config.json", repo_type="model"
+    )
+    with open(config_file, "r") as f:
+        config_data = json.load(f)
+    args = argparse.Namespace(**config_data)
+    model = TiSASRec(
+        config_data["usernum"], config_data["itemnum"], config_data["itemnum"], args
+    ).to(args.device)
+    model.load_state_dict(
+        torch.load(model_file, map_location=args.device)
+    )
+    
+    return model, args
+
 
 def get_text_name_dict(item_collection):
     text_name_dict = {"title": {}, "description": {}}
@@ -133,7 +172,8 @@ class ModelManager:
         self.lgcn_dataset = None
         self.tisasrec_dataset = None
         self.gsasrec_dataset = None
-
+        self.tisasrec_args = None
+        self.gsasrec_args = None
         self.llmrec_args = Namespace(
             multi_gpu=False,  # Multi-GPU 사용 여부
             gpu_num=0,  # GPU 번호
@@ -152,34 +192,7 @@ class ModelManager:
             stage2_lr=0.0001,  # 단계 2 학습률
             device="cuda:0",  # 디바이스 설정
         )
-        self.tisasrec_args = Namespace(
-            dataset="Movies_and_TV_Time",
-            batch_size=200,
-            lr=0.001,
-            maxlen=50,
-            hidden_units=64,
-            num_blocks=2,
-            num_epochs=1000,
-            num_heads=1,
-            dropout_rate=0.2,
-            l2_emb=0.00005,
-            device="cuda:0",
-            time_span=256,
-            state_dict_path="ML/models/saved_models/TiSASRec_model_epoch_1000.pt",
-        )
-        self.gsasrec_args = Namespace(
-            dataset_name="Movies_and_TV",
-            sequence_length=100,
-            embedding_dim=64,
-            num_heads=1,
-            max_batches_per_epoch=500,
-            num_blocks=2,
-            dropout_rate=0.5,
-            negs_per_pos=256,
-            gbce_t=0.75,
-            state_dict_path="ML/models/saved_models/gsasrec-Movies_and_TV-step=326197.pt",
-            device="cuda:0",
-        )
+        
 
         cold_items, text_name_dict, missing_list = data
         self.llmrec_args.cold_items = cold_items
@@ -207,8 +220,9 @@ class ModelManager:
     def test_data(self):  # gsasrec_model
         with open(f"ML/data/Movies_and_TV_text_name_dict.json.gz", "rb") as ft:
             text_name_dict = pickle.load(ft)
-        username = "knh123"  # Hugging Face 계정 이름
-        repo_name = "gsasrec-trained-model"  # 저장소 이름
+        username = "PNUDI"  # Hugging Face 계정 이름
+        repo_name = "gSASRec"  # 저장소 이름
+        repo_id = "PNUDI/gSASRec"
         repo_url = f"https://huggingface.co/{username}/{repo_name}/resolve/main"
         config_url = f"{repo_url}/config.json"
         response = requests.get(config_url)
@@ -236,16 +250,7 @@ class ModelManager:
         with open(f"ML/data/Movies_and_TV_text_name_dict.json.gz", "rb") as ft:
             text_name_dict = pickle.load(ft)
         repo_id = "knh123/tisasrec-trained-model"  # 업로드한 모델의 repo ID
-        user_id = "888"
-        user_data = self.user_table.find_one(
-            {"_id": user_id}, {"items.itemnum": 1, "items.unixReviewTime": 1}
-        )
-        item_time = []
-        if user_data and "items" in user_data:
-            item_time = [
-                (item["itemnum"], item["unixReviewTime"]) for item in user_data["items"]
-            ]
-
+    
         model_file = hf_hub_download(
             repo_id=repo_id, filename="pytorch_model.bin", repo_type="model"
         )
@@ -262,13 +267,49 @@ class ModelManager:
             torch.load(model_file, map_location=args.device)
         )
         a, b = tisasrec_recommend_top5(
-            args, self.tisasrec_model, user_id, item_time, text_name_dict
+            args, self.tisasrec_model,[(5, 11), (55, 11), (15, 11), (105, 11), (199, 11), (250, 11)],
+            978, text_name_dict
         )
         print(a)
+    def test3(self):
+        repo_id = "PNUDI/gSASRec"
+
+        model_file = hf_hub_download(
+                    repo_id=repo_id, filename="pytorch_model.bin", repo_type="model"
+                )
+        config_file = hf_hub_download(
+                    repo_id=repo_id, filename="config.json", repo_type="model"
+                )
+        with open(config_file, "r") as f:
+            config_data = json.load(f)
+        config = argparse.Namespace(**config_data)
+
+        model = build_model(config)
+
+        model.load_state_dict(torch.load(model_file, map_location='cpu'))
+
+        model.eval()
+
+        # 5. 데이터 로드 (로컬 파일 사용)
+        with open(f'ML/data/Movies_and_TV_text_name_dict.json.gz', 'rb') as ft:
+            text_name_dict = pickle.load(ft)
+
+        # 6. 사용자 입력을 통한 추천 실행
+        
+        a, b = gsasrec_recommend_top5(
+            model,
+            [(5, 11), (55, 11), (15, 11), (105, 11), (199, 11), (250, 11)],
+            978,
+            self.gsasrec_args,
+            text_name_dict,
+        )
+        print(a)
+        print(b)
 
     def _load_models(self):
         """모델 및 데이터 로드 로직"""
         # Load ALLMRec Model
+        
         self.llmrec_args.missing_items = self.missing_list
         self.allmrec_model = A_llmrec_model(self.llmrec_args).to(
             self.llmrec_args.device
@@ -282,32 +323,15 @@ class ModelManager:
 
         # Load LGCN Model and Dataset
         self.lgcn_model, self.lgcn_dataset = prepare()
-
-        # Load TiSASRec and Dataset
-        self.tisasrec_dataset = data_partition(self.tisasrec_args.dataset)
-        User, usernum, itemnum, timenum, item_map, reverse_item_map = (
-            self.tisasrec_dataset
-        )
-        self.tisasrec_model = tisasrec_initialize_model(
-            self.tisasrec_args, usernum, itemnum
-        )
-        self.tisasrec_model.load_state_dict(
-            torch.load(self.tisasrec_args.state_dict_path)
-        )
+        
+        # Load TiSASRec
+        self.tisasrec_model, self.tisasrec_args = tisasrec_load_model()
         self.tisasrec_model.eval()
-        self.gsasrec_model = build_model(self.gsasrec_args, itemnum)
-        self.gsasrec_model.to(self.gsasrec_args.device)
-        self.gsasrec_model.load_state_dict(
-            torch.load(self.gsasrec_args.state_dict_path)
-        )
+        # Load gSASRec
+        self.gsasrec_model, self.gsasrec_args = gsasrec_load_model()
         self.gsasrec_model.eval()
-        # Load gSASRec and Dataset
-        self.gsasrec_model = build_model(self.gsasrec_args, itemnum)
-        self.gsasrec_model.to(self.gsasrec_args.device)
-        self.gsasrec_model.load_state_dict(
-            torch.load(self.gsasrec_args.state_dict_path)
-        )
-        self.gsasrec_model.eval()
+        
+        
 
     def inference(self, user_id, seq):
         """ALLMRec 및 LGCN 모델 기반 추론"""
@@ -327,7 +351,7 @@ class ModelManager:
 
         print(allmrec_prediction)
 
-        # TiSASRec
+        # TiSASRec 
         tisasrec_tok5_title, tisasrec_prediction = tisasrec_recommend_top5(
             self.tisasrec_args,
             self.tisasrec_model,
@@ -351,3 +375,5 @@ class ModelManager:
             "gsasrec_prediction": gsasrec_prediction,
             "tisasrec_prediction": tisasrec_prediction,
         }
+
+

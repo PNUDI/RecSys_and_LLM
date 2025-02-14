@@ -147,13 +147,12 @@ def data_partition(fname):
     return [User, usernum, itemnum, timenum, item_map, reverse_item_map]
 
 
-def tisasrec_recommend_top5(args, model, user_id, dataset, text_name_dict):
+def tisasrec_recommend_top5(args, model, user_sequence, user_id,text_name_dict):
 
-    User, user_num, item_num, time_num, item_map, reverse_item_map = dataset
-    user_sequence = User[user_id]
+   
+    
 
     if len(user_sequence) < 1:
-        print(f"User {user_id} has no sequence data.")
         return []
 
     seq = np.zeros([args.maxlen], dtype=np.int32)
@@ -167,7 +166,7 @@ def tisasrec_recommend_top5(args, model, user_id, dataset, text_name_dict):
         if idx == -1:
             break
 
-    item_idx = list(range(1, item_num + 1))
+    item_idx = list(range(1, args.itemnum + 1))
 
     time_matrix = computeRePos(time_seq, args.time_span)
 
@@ -186,11 +185,10 @@ def tisasrec_recommend_top5(args, model, user_id, dataset, text_name_dict):
     top5_titles = []
     top5_num = []
     for idx in top5_idx:
-        idx2 = reverse_item_map[int(idx.item()) + 1]
-        top5_num.append(idx2)
-        if len(top5_titles) == 5:
+        if len(top5_num) == 8:
             break
-        if idx2 in text_name_dict["title"]:
-            top5_titles.append(text_name_dict["title"][idx2])
+        if int(idx.item()) + 1 in text_name_dict["title"]:
+            top5_titles.append(text_name_dict["title"][int(idx.item()) + 1])
+            top5_num.append(int(idx.item()) + 1)
 
     return top5_titles, top5_num
