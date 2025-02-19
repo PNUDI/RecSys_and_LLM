@@ -64,7 +64,7 @@ python main.py
     },
     ...
   ]
-  "UserName": "adsadsadsad" #UserName
+  "userName": "adsadsadsad" #userName
 }
 ```
 ## Item Document Structure
@@ -106,14 +106,17 @@ python main.py
 ```
 {
   "_id": "1", # ItemNum
-  "review": {
-    "UserName": "really happy they got evangelised .. spoiler alert==happy ending liked…", # UserNum: Review
-    "UserName": "The movie was a good synopsis of the main parts of the book. Just shor…"
+  "review": [{
+    "UserName": namho123, # userName: 설정된 userName
+    "reviewText": "The movie was a good synopsis of the main parts of the book. Just shor…" #review
+    "rating": 4.0 # string아닙니다
   },
-  "summary": {
-    "UserName": "great", # UserNum: Summary
-    "UserName": "Synopsis"
-  }
+  {
+    "UserName": knh123, # userName: 설정된 userName
+    "reviewText": "good" #review
+    "rating": 2.0 # string아닙니다
+  }]
+  
 }
 ```
 ## conversation Document Structure
