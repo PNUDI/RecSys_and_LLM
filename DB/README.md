@@ -107,12 +107,12 @@ python main.py
 {
   "_id": "1", # ItemNum
   "review": [{
-    "UserName": namho123, # userName: 설정된 userName
+    "userName": namho123, # userName: 설정된 userName
     "reviewText": "The movie was a good synopsis of the main parts of the book. Just shor…" #review
     "rating": 4.0 # string아닙니다
   },
   {
-    "UserName": knh123, # userName: 설정된 userName
+    "userName": knh123, # userName: 설정된 userName
     "reviewText": "good" #review
     "rating": 2.0 # string아닙니다
   }]
