@@ -1,0 +1,60 @@
+{
+  "os":  "Linux-5.15.0-119-generic-x86_64-with-glibc2.35",
+  "python":  "CPython 3.12.8",
+  "startedAt":  "2025-03-02T07:03:50.663629Z",
+  "program":  "/home/jiyoon/dev/RecSys_and_LLM/crawling/model.ipynb",
+  "codePath":  "crawling/model.ipynb",
+  "git":  {
+    "remote":  "https://github.com/PNUDI/RecSys_and_LLM.git",
+    "commit":  "5a6b1990bb91cefc4257f62fd2b4746fcd33a60d"
+  },
+  "email":  "jammy9087@gmail.com",
+  "root":  "/home/jiyoon/dev/RecSys_and_LLM/crawling",
+  "host":  "gpusystem",
+  "executable":  "/home/jiyoon/miniconda3/envs/RecLLM/bin/python",
+  "codePathLocal":  "model.ipynb",
+  "cpu_count":  24,
+  "cpu_count_logical":  48,
+  "gpu":  "NVIDIA RTX A4000",
+  "gpu_count":  4,
+  "disk":  {
+    "/":  {
+      "total":  "942860439552",
+      "used":  "872936013824"
+    }
+  },
+  "memory":  {
+    "total":  "134826758144"
+  },
+  "cpu":  {
+    "count":  24,
+    "countLogical":  48
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA RTX A4000",
+      "memoryTotal":  "17171480576",
+      "cudaCores":  6144,
+      "architecture":  "Ampere"
+    },
+    {
+      "name":  "NVIDIA RTX A4000",
+      "memoryTotal":  "17171480576",
+      "cudaCores":  6144,
+      "architecture":  "Ampere"
+    },
+    {
+      "name":  "NVIDIA RTX A4000",
+      "memoryTotal":  "17171480576",
+      "cudaCores":  6144,
+      "architecture":  "Ampere"
+    },
+    {
+      "name":  "NVIDIA RTX A4000",
+      "memoryTotal":  "17171480576",
+      "cudaCores":  6144,
+      "architecture":  "Ampere"
+    }
+  ],
+  "cudaVersion":  "12.2"
+}

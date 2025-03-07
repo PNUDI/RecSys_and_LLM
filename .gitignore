@@ -1,3 +1,5 @@
 .env
 
 data/
+saved_model/
+unsloth_compiled_cache/

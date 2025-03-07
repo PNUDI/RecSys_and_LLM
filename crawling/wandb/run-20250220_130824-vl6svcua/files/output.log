@@ -1,0 +1,47 @@
+[('Extreme Dating In this action-comedy, four twenty-something friends are looking for love and having no luck. While on a ski trip, one of them finds passion with a beautiful girl after a random accident on the icy slopes. The others quickly conclude that the extreme circumstances of the accident... Read all', 'Return of the Indian This short documentary from 1955 discusses the status of Indigenous populations in Canada and their struggles within Canadian society. The emphasis is on positive change.', "Jack-Wabbit and the Beanstalk Bugs fights the legendary giant. In the historical context of World War II much fun is made of the giant's claimed superiority over the more clever and fun-loving rabbit.", 'Inki and the Lion Preceded by thunderous crashing from the jungle, a little black bird with a syncopated hop emerges from the brush to mystify big-game hunter Inki as he attempts to track down his prey: a ferocious daddy lion.', "Take Her, She's Mine A father's attempts to protect his college-age daughter from trouble backfire and he finds himself in the middle of scandal after scandal.", 'Carolina Barrantes Carolina Barrantes, the daughter of the despotic landowner Alfredo Barrantes, has cursed blood and being harassed by many people will fight alongside David for his love.', "Flaming Guns A ranch manager falls in love with a banker's daughter. After he and the girl's parents have a quarrel, he and the girl flee across the border into Mexico.", 'Sandman Tails A Columbia animated short. Scrappy and Ooopie fall asleep reading a fairy tale for which they enter the magical land in dream time.', 'Forført Documentary about the Indian guru Sathya Sai Baba. The now 76 year-old Sai Baba claims he is God himself and that he can heal cancer and resurrect the dead.', "Massacre no Supermercado Mário, employee of a supermarket, involves Fernando, the financial controller of the boxes, in the assault on the organization's safe. To help them, he attracts his friend Carlos Alberto, who owns a collection of weapons, including an INA machine gun. On the night of the assault,... Read all", 'CyberCrime The latest news on crimes beings commited online.', 'Griha Pravesh Amar and Mansi meet through their respective families and have an arranged marriage. Amar, a book-keeper, is very thrifty, intends to save money so that they can buy their very own flat, and both to live as frugally as possible. Mansi soon gives birth to a baby boy, Bablu. Then S... Read all', 'The Unmasking In Sorrento, Italy, Lorenzo, a young Italian potter, lives with his wife and baby boy. Ambitious to seek new fields, Lorenzo informs his wife and parents of his intentions to go to America. At Ellis Island, in New York, Lorenzo finds a fellow countryman to guide him in the new la... Read all', "Mind the Paint The maid of a doctor, he had some canvases he didn't care for bestowed on him once by an unknown artist, thankfully has saved them as the paintings are now worth some money and others want them.", 'Interrupted Lover A pair of bucolic lovers discovered by the wrathful father, who teaches the gallant a lesson.', "Heart Strings After being abandoned by her mother and adopted by Dr. McLean, little Johanna grows into an attractive young woman. She falls in love with medical student Gerald, but trouble ensues for both when the naive fellow falls for an older woman--who turns out to be Johanna's long-lost m... Read all"), tensor([[1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 1., 0., 0., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 1., 0., 1., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 1., 0., 1., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 1., 0., 0., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0., 0., 0., 0., 1.],
+        [0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         1., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 1., 0., 0., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 1., 0., 1., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]])]
+Epoch 1/5 Training: 100%|██████████| 10368/10368 [17:29<00:00,  9.88it/s, loss=0.426]
+Epoch 1/5 Validation: 100%|██████████| 2593/2593 [00:55<00:00, 46.55it/s]
+Epoch 1: Train Loss = 0.4241, F1-score = 0.1504
+Epoch 2/5 Training: 100%|██████████| 10368/10368 [17:31<00:00,  9.86it/s, loss=0.413]
+Epoch 2/5 Validation: 100%|██████████| 2593/2593 [00:55<00:00, 46.70it/s]
+Epoch 2: Train Loss = 0.4220, F1-score = 0.2054
+Epoch 3/5 Training: 100%|██████████| 10368/10368 [17:29<00:00,  9.88it/s, loss=0.436]
+Epoch 3/5 Validation: 100%|██████████| 2593/2593 [00:55<00:00, 46.62it/s]
+Epoch 3: Train Loss = 0.4218, F1-score = 0.2262
+Epoch 4/5 Training: 100%|██████████| 10368/10368 [17:36<00:00,  9.82it/s, loss=0.425]
+Epoch 4/5 Validation: 100%|██████████| 2593/2593 [00:55<00:00, 46.67it/s]
+Epoch 4: Train Loss = 0.4216, F1-score = 0.2206
+Epoch 5/5 Training: 100%|██████████| 10368/10368 [17:31<00:00,  9.86it/s, loss=0.417]
+Epoch 5/5 Validation: 100%|██████████| 2593/2593 [00:55<00:00, 46.64it/s]
+Epoch 5: Train Loss = 0.4215, F1-score = 0.2264

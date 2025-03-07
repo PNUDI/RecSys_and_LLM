@@ -1,0 +1,22 @@
+{"time":"2025-02-20T13:08:24.623014225Z","level":"INFO","msg":"stream: starting","core version":"0.19.6","symlink path":"/home/jiyoon/dev/RecSys_and_LLM/crawling/wandb/run-20250220_130824-vl6svcua/logs/debug-core.log"}
+{"time":"2025-02-20T13:08:24.735215996Z","level":"INFO","msg":"created new stream","id":"vl6svcua"}
+{"time":"2025-02-20T13:08:24.735270776Z","level":"INFO","msg":"stream: started","id":"vl6svcua"}
+{"time":"2025-02-20T13:08:24.735349735Z","level":"INFO","msg":"writer: Do: started","stream_id":"vl6svcua"}
+{"time":"2025-02-20T13:08:24.735444331Z","level":"INFO","msg":"sender: started","stream_id":"vl6svcua"}
+{"time":"2025-02-20T13:08:24.73556505Z","level":"INFO","msg":"handler: started","stream_id":"vl6svcua"}
+{"time":"2025-02-20T13:08:25.05538667Z","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-02-20T13:08:25.31878552Z","level":"INFO","msg":"Pausing system monitor"}
+{"time":"2025-02-20T13:08:35.102326801Z","level":"INFO","msg":"Resuming system monitor"}
+{"time":"2025-02-20T13:08:35.106292346Z","level":"INFO","msg":"Pausing system monitor"}
+{"time":"2025-02-20T13:08:38.428418436Z","level":"INFO","msg":"Resuming system monitor"}
+{"time":"2025-02-20T13:08:38.470805286Z","level":"INFO","msg":"Pausing system monitor"}
+{"time":"2025-02-20T13:08:41.182334276Z","level":"INFO","msg":"Resuming system monitor"}
+{"time":"2025-02-20T14:40:59.754672402Z","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-02-20T14:40:59.756577996Z","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-02-20T14:41:00.671326741Z","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading wandb-summary.json","runtime_seconds":0.324048261,"progress":"1.1MB/1.5MB"},{"desc":"uploading config.yaml","runtime_seconds":0.065289044,"progress":"854B/854B"}],"total_operations":2}}
+{"time":"2025-02-20T14:41:01.744947425Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-02-20T14:41:04.215237256Z","level":"INFO","msg":"stream: closing","id":"vl6svcua"}
+{"time":"2025-02-20T14:41:04.215284301Z","level":"INFO","msg":"handler: closed","stream_id":"vl6svcua"}
+{"time":"2025-02-20T14:41:04.215307606Z","level":"INFO","msg":"writer: Close: closed","stream_id":"vl6svcua"}
+{"time":"2025-02-20T14:41:04.215353265Z","level":"INFO","msg":"sender: closed","stream_id":"vl6svcua"}
+{"time":"2025-02-20T14:41:04.215485225Z","level":"INFO","msg":"stream: closed","id":"vl6svcua"}
