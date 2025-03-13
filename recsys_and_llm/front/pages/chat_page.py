@@ -3,6 +3,11 @@
 from datetime import datetime
 
 import streamlit as st  # type: ignore
+from front.components.conversation_db_manager import (
+    db_load_conversation,
+    db_retrieve_all_conversations,
+    db_save_conversation,
+)
 from front.components.conversation_manager import (
     load_conversation,
     retrieve_all_conversations,
@@ -52,7 +57,7 @@ def main():
         st.markdown("## 대화 관리")
         st.markdown("---")
         st.markdown("### 저장된 대화 불러오기 📂")
-        saved_conversations = retrieve_all_conversations(reviewer_id)
+        saved_conversations = db_retrieve_all_conversations(reviewer_id)
 
         if not saved_conversations:
             st.write("저장된 대화 세션이 없습니다.")
@@ -69,7 +74,9 @@ def main():
 
             if st.button("불러오기", key="load_convo_button"):
                 selected_conversation_id = conversation_dict[chosen_session]
-                st.info(load_conversation(reviewer_id, selected_conversation_id))
+                st.session_state.conversations = db_load_conversation(
+                    reviewer_id, selected_conversation_id
+                )
 
         st.markdown("---")
 
@@ -79,7 +86,7 @@ def main():
             title = st.text_input("대화 제목 입력")
             submitted = st.form_submit_button("저장하기")
             if submitted:
-                st.info(save_conversation(title, reviewer_id))
+                st.info(db_save_conversation(title, reviewer_id))
 
     # ----------------------------------------------------------------
     # (C) 메인 영역: 모델 선택 및 채팅 인터페이스
@@ -102,7 +109,9 @@ def main():
     st.write("---")
 
     # (C2) 채팅 진행 (입력)
-    user_message = st.chat_input("원하는 영화를 찾지 못했나요? UniCRS와 대화해보세요!")
+    user_message = st.chat_input(
+        f"원하는 영화를 찾지 못했나요? {selected_model_label}와/과 대화해보세요!"
+    )
     if user_message:
 
         # Show loading indicator while processing
@@ -112,13 +121,20 @@ def main():
             )
         current_time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         st.session_state.conversations.append(
-            {"role": "user", "content": user_message, "date_time": current_time_str}
+            {
+                "role": "user",
+                "content": user_message,
+                "date_time": current_time_str,
+                "entity": [],
+                "feedback": "None",
+            }
         )
         st.session_state.conversations.append(
             {
                 "role": "assistant",
                 "content": response,
                 "date_time": current_time_str,
+                "entity": [],
                 "feedback": "None",
             }
         )
