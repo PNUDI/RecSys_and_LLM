@@ -133,12 +133,14 @@ class SASRec(torch.nn.Module):
         else:
             return pos_logits, neg_logits
 
-    def predict(self, user_ids, log_seqs, item_indices):
-        log_feats = self.log2feats(log_seqs)
+    def predict(self, item_indices, user_ids=None, log_seqs=None, log_emb=None):
+        if log_emb is None:
+            log_feats = self.log2feats(log_seqs)
+            final_feat = log_feats[:, -1, :]
+        else:
+            final_feat = log_emb
 
         # log_feats는 [batch_size, seq_len, hidden_dim]으로 이루어져 있음 -> final_feat은 seq_len 마지막 시점에서의 사용자 특성 나타냄
-        final_feat = log_feats[:, -1, :]
-
         item_embs = self.item_emb(torch.LongTensor(item_indices).to(self.dev))
 
         logits = item_embs.matmul(final_feat.unsqueeze(-1)).squeeze(-1)

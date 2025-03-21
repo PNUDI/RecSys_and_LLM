@@ -452,9 +452,9 @@ class A_llmrec_model(nn.Module):
 
         return ",".join(candidate_text), candidate_ids
 
-    def make_candidate_text_inference(self, interact_ids, candidate_num):
-        candidate_ids = make_candidate_for_LLM(
-            self.recsys.model, self.item_num, interact_ids, self.args
+    def make_candidate_text_inference(self, log_emb, interact_ids, candidate_num):
+        candidate_ids = self.recsys.make_candidate_for_LLM(
+            self.item_num, log_emb, interact_ids, self.args
         )
         candidate_text = []
 
@@ -684,19 +684,17 @@ class A_llmrec_model(nn.Module):
         return output_text
 
     def inference(self, data):
-        seq = data
+        seq, log_emb = data
 
         text_input = []
         interact_embs = []
         candidate_embs = []
         with torch.no_grad():
-            log_emb = self.recsys.model(seq, mode="log_only")
-
             interact_text, interact_ids = self.make_interact_text(seq[seq > 0], 10)
 
             candidate_num = 20
             candidate_text, candidate_ids, candidate_mapper = (
-                self.make_candidate_text_inference(seq[seq > 0], candidate_num)
+                self.make_candidate_text_inference(log_emb, seq[seq > 0], candidate_num)
             )
 
             # 영화 추천

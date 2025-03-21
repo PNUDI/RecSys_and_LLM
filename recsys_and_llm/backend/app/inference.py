@@ -4,17 +4,22 @@ import torch
 import torch.nn.functional as F
 
 from recsys_and_llm.ml.models.gSASRec.gsasrec_inference import gsasrec_recommend_top5
-from recsys_and_llm.ml.models.Phi4.user_genre_predict import predict_user_preferred_genres
-
+from recsys_and_llm.ml.models.Phi4.user_genre_predict import (
+    predict_user_preferred_genres,
+)
 from recsys_and_llm.ml.models.TiSASRec.TiSASRec_inference import tisasrec_recommend_top5
 from recsys_and_llm.ml.utils import seq_preprocess
 
 
-def inference(model_manager, user_id, seq, seq_time):
+def inference(model_manager, user_id, seq, seq_time, genre_movie_ids):
     # ALLMRec 기반 추천
     seq = seq_preprocess(model_manager.llmrec_args.maxlen, seq)
     seq = np.expand_dims(np.array(seq), axis=0)
-    allmrec_prediction = model_manager.allmrec_model(seq, mode="inference")
+
+    with torch.no_grad():
+        log_emb = model_manager.allmrec_model.recsys.model(seq, mode="log_only")
+    data = [seq, log_emb]
+    allmrec_prediction = model_manager.allmrec_model(data, mode="inference")
 
     # TiSASRec 기반 추천
     tisasrec_prediction = tisasrec_recommend_top5(
@@ -34,10 +39,16 @@ def inference(model_manager, user_id, seq, seq_time):
         model_manager.missing_list,
     )
 
+    # 선호 장르 아이템 SASRec ranking
+    genrerec_prediction = model_manager.allmrec_model.recsys.rank_item_by_genre(
+        log_emb, genre_movie_ids
+    )
+
     return {
         "allmrec_prediction": allmrec_prediction,
         "tisasrec_prediction": tisasrec_prediction,
         "gsasrec_prediction": gsasrec_prediction,
+        "genrerec_prediction": genrerec_prediction,
     }
 
 
@@ -84,4 +95,3 @@ def genre_inference(model_manager, user_genre_counts, k=3):
     )
 
     return user_genre
-

@@ -58,3 +58,63 @@ class RecSys(nn.Module):
 
     def forward():
         print("forward")
+
+    def make_candidate_for_LLM(self, itemnum, log_emb, log_seq, args):
+        seq = np.zeros([args.maxlen], dtype=np.int32)
+        idx = args.maxlen - 1
+        for i in reversed(log_seq):
+            seq[idx] = i
+            idx -= 1
+            if idx == -1:
+                break
+        rated = set(seq)
+        rated.add(0)
+
+        item_idx = []
+        for t in range(1, itemnum + 1):
+            if t in rated:
+                continue
+            item_idx.append(t)
+
+        # predictions = -model.predict(*[np.array(l) for l in [[-1], [seq], item_idx]])
+        predictions = -self.model.predict(
+            np.array(item_idx),  # candidate items
+            user_ids=np.array([-1]),  # user_id placeholder
+            log_seqs=np.array([seq]),  # sequence
+            log_emb=log_emb,  # 유저 임베딩
+        )
+        predictions = predictions[0]  # - for 1st argsort DESC
+
+        # Top-K 아이템 선택 (가장 높은 점수 기준)
+        top_k = 20
+        top_k_indices = predictions.argsort()[
+            :top_k
+        ]  # 점수가 높은 Top-K 아이템의 인덱스 선택
+
+        # 실제 아이템 번호로 변환
+        top_k_items = [
+            item_idx[idx] for idx in top_k_indices
+        ]  # 인덱스를 아이템 번호로 매핑
+
+        return top_k_items
+
+    def rank_item_by_genre(self, log_emb, genre_movie_ids):
+        # predictions = -model.predict(*[np.array(l) for l in [[-1], [seq], item_idx]])
+        predictions = -self.model.predict(
+            np.array(genre_movie_ids),  # candidate items
+            log_emb=log_emb,  # 유저 임베딩
+        )
+        predictions = predictions[0]  # - for 1st argsort DESC
+
+        # Top-K 아이템 선택 (가장 높은 점수 기준)
+        top_k = 8
+        top_k_indices = predictions.argsort()[
+            :top_k
+        ]  # 점수가 높은 Top-K 아이템의 인덱스 선택
+
+        # 실제 아이템 번호로 변환
+        top_k_items = [
+            genre_movie_ids[idx] for idx in top_k_indices
+        ]  # 인덱스를 아이템 번호로 매핑
+
+        return top_k_items

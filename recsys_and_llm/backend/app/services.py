@@ -1,6 +1,5 @@
 import re
 from collections import Counter
-
 from datetime import datetime
 
 import requests
@@ -11,7 +10,6 @@ from recsys_and_llm.backend.app.inference import (
     inference,
     item_content_inference,
 )
-
 from recsys_and_llm.backend.app.schemas import *
 
 
@@ -78,8 +76,6 @@ def sign_in(
     if model_manager is None:
         return ApiResponse(success=False, message="모델이 로드되지 않았습니다.")
 
-    result = inference(model_manager, user_id, seq, seq_time)
-
     watched_genres = [
         genre
         for item in user_data["items"]
@@ -90,6 +86,13 @@ def sign_in(
     # 유저의 장르 빈도수 계산
     user_genre_counts = Counter(watched_genres)
     genre = genre_inference(model_manager, user_genre_counts)
+    genre_movie_ids = [
+        int(movie["_id"])
+        for movie in item_collection.find({"predicted_genre": genre}, {"_id": 1})
+    ]
+    print(genre, len(genre_movie_ids))
+
+    result = inference(model_manager, user_id, seq, seq_time, genre_movie_ids)
 
     # match = re.search(r"\(ID: (\d+)\)", result["allmrec_prediction"])
     # allmrec_ids = [match.group(1)] if match else []
@@ -97,8 +100,11 @@ def sign_in(
     allmrec_ids = [str(result["allmrec_prediction"])]
     gsasrec_ids = list(map(str, result["gsasrec_prediction"]))
     tisasrec_ids = list(map(str, result["tisasrec_prediction"]))
+    genrerec_ids = list(map(str, result["genrerec_prediction"]))
 
-    all_ids = list(set(allmrec_ids + gsasrec_ids + tisasrec_ids))  # 중복 제거
+    all_ids = list(
+        set(allmrec_ids + gsasrec_ids + tisasrec_ids + genrerec_ids)
+    )  # 중복 제거
     items = item_collection.find(
         {"_id": {"$in": all_ids}}, {"_id": 1, "available_images": 1, "title": 1}
     )
@@ -143,7 +149,7 @@ def sign_in(
                     "img_url": item_map.get(_id, {}).get("image"),
                     "title": item_map.get(_id, {}).get("title"),
                 }
-                for _id in tisasrec_ids
+                for _id in genrerec_ids
             ],
         },
     }

@@ -1,6 +1,7 @@
 import random
 from collections import Counter
 
+import torch
 from pymongo import MongoClient
 from transformers import pipeline
 
