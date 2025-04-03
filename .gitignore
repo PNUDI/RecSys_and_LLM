@@ -5,3 +5,5 @@ __pycache__
 recsys_and_llm/ml/models/Phi4/llm_predictions.txt
 recsys_and_llm/data/crawling/raw/*
 
+recsys_and_llm/ml/models/Phi4/unsloth_compiled_cache/
+recsys_and_llm/ml/models/Phi4/cleaned_imdb_genre.csv
