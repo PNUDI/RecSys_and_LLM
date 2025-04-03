@@ -2,6 +2,7 @@ import os
 import sys
 from contextlib import asynccontextmanager
 
+import torch
 from fastapi import FastAPI, Request
 from pymongo import MongoClient
 
@@ -37,7 +38,6 @@ async def lifespan(app: FastAPI):
 
     data = [cold_items, text_name_dict, missing_list, global_genre_distribution]
 
-
     # 모델 로드
     model_manager = ModelManager(data)
 
@@ -52,6 +52,7 @@ async def lifespan(app: FastAPI):
 
     # 리소스 정리
     del model_manager
+    torch.cuda.empty_cache()
     client.close()
     print("서버 종료: 모델 리소스 해제 및 MongoDB 연결 종료.")
 
