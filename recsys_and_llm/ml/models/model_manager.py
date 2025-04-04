@@ -34,16 +34,21 @@ class ModelManager:
         self.missing_list = missing_list
         self.global_genre_distribution = global_genre_distribution
 
-
         # ModelLoader를 통해 모든 모델을 한 번에 로드
         model_loader = ModelLoader(self.llmrec_args)
-        models = model_loader.get_models()
 
-        self.allmrec_model = models["allmrec_model"]
-        self.tisasrec_model = models["tisasrec_model"]
-        self.gsasrec_model = models["gsasrec_model"]
-        self.contentrec_model = models["contentrec_model"]
-        self.genrerec_model = models["genrerec_model"]
+        self.allmrec_model = model_loader._load_allmrec
+        self.tisasrec_model = model_loader._load_tisasrec
+        self.gsasrec_model = model_loader._load_gsasrec
+        self.contentrec_model = model_loader._load_contentrec
+        self.genrerec_model = model_loader._load_genrerec
 
-        self.tisasrec_args = models["tisasrec_args"]
-        self.gsasrec_args = models["gsasrec_args"]
+        self.tisasrec_args = model_loader.tisasrec_args
+        self.gsasrec_args = model_loader.gsasrec_args
+
+    def cleanup(self):
+        self.allmrec_model.to("cpu")
+        self.tisasrec_model.to("cpu")
+        self.gsasrec_model.to("cpu")
+        self.contentrec_model = None
+        # self.genrerec_model.model.to("cpu")

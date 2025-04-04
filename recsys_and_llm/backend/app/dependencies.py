@@ -1,3 +1,5 @@
+import gc
+import multiprocessing
 import os
 import sys
 from contextlib import asynccontextmanager
@@ -51,9 +53,12 @@ async def lifespan(app: FastAPI):
     yield
 
     # 리소스 정리
+    model_manager.cleanup()
     del model_manager
     torch.cuda.empty_cache()
     client.close()
+    gc.collect()
+
     print("서버 종료: 모델 리소스 해제 및 MongoDB 연결 종료.")
 
 
