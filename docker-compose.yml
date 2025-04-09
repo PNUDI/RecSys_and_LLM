@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  recsys-app:
+    build: .
+    image: recsys-llm
+    ports:
+      - "8000:8000"
+      - "8501:8501"
+    env_file:
+      - .env
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command: ["/entrypoint.sh"]
