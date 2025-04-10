@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # python, pip 명령어 링크 설정
-RUN ln -s /usr/bin/python3.10 /usr/bin/python && ln -s /usr/bin/pip3 /usr/bin/pip
+RUN ln -sf /usr/bin/python3.10 /usr/bin/python && \
+    [ -e /usr/bin/pip ] || ln -s /usr/bin/pip3 /usr/bin/pip
 
 # poetry 설치
 RUN curl -sSL https://install.python-poetry.org | python3 - && \
@@ -19,14 +20,20 @@ WORKDIR /app
 # poetry 환경설정: 가상환경 OFF
 ENV POETRY_VIRTUALENVS_CREATE=false
 
+# Python 모듈 import 경로 문제 해결 (ex: recsys_and_llm)
+ENV PYTHONPATH="/app"
+
 # 프로젝트 메타파일 복사 (캐시 활용)
 COPY pyproject.toml poetry.lock ./
 
 # 의존성 설치
 RUN poetry install --no-root
 
-# 전체 코드 복사 (모듈/소스코드 포함)
-COPY . .
+# 설정 파일만 복사
+COPY pyproject.toml poetry.lock ./
+
+# 소스 코드 디렉토리만 복사
+COPY ./recsys_and_llm ./recsys_and_llm
 
 # entrypoint.sh 복사 및 실행 권한 부여
 COPY entrypoint.sh /entrypoint.sh
