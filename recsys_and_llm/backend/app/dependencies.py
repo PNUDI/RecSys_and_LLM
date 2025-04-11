@@ -5,11 +5,12 @@ import sys
 from contextlib import asynccontextmanager
 
 import torch
+from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from pymongo import MongoClient
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from recsys_and_llm.backend.app.config import ALL_GENRES, DB_NAME, MONGO_URI
+from recsys_and_llm.backend.app.config import ALL_GENRES
 from recsys_and_llm.ml.models.model_manager import ModelManager
 from recsys_and_llm.ml.utils import (
     calculate_genre_distribution,
@@ -22,8 +23,9 @@ from recsys_and_llm.ml.utils import (
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """서버 시작 및 종료 시 실행할 코드"""
-    client = MongoClient(MONGO_URI)
-    db = client[DB_NAME]
+    load_dotenv()
+    client = MongoClient(os.getenv("MONGO_URI"))
+    db = client[os.getenv("DB_NAME")]
     user_collection = db["user"]
     item_collection = db["item"]
     review_collection = db["review"]

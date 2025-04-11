@@ -1,11 +1,13 @@
+import os
 import random
 from collections import Counter
 
 import torch
+from dotenv import load_dotenv
 from pymongo import MongoClient
 from transformers import pipeline
 
-from recsys_and_llm.backend.app.config import ALL_GENRES, DB_NAME, MONGO_URI
+from recsys_and_llm.backend.app.config import ALL_GENRES
 from recsys_and_llm.ml.utils import calculate_genre_distribution
 
 
@@ -148,8 +150,9 @@ def predict_user_preferred_genres_test(
 
 def main():
     # MongoDB 연결 설정
-    client = MongoClient(MONGO_URI)
-    db = client[DB_NAME]
+    load_dotenv()
+    client = MongoClient(os.getenv("MONGO_URI"))
+    db = client[os.getenv("DB_NAME")]
     item_collection = db["item"]
     user_collection = db["user"]
 

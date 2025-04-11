@@ -1,8 +1,10 @@
+import os
+
+from dotenv import load_dotenv
 from pymongo import MongoClient
 from transformers import pipeline
 
-from recsys_and_llm.backend.app.config import ALL_GENRES, DB_NAME, MONGO_URI
-
+from recsys_and_llm.backend.app.config import ALL_GENRES
 
 
 def predict_movie_genres(
@@ -93,12 +95,12 @@ def predict_movie_genres(
 
 
 # MongoDB 연결 및 실행 예시
-client = MongoClient(MONGO_URI)
-db = client[DB_NAME]
+load_dotenv()
+client = MongoClient(os.getenv("MONGO_URI"))
+db = client[os.getenv("DB_NAME")]
 item_collection = db["item"]
 user_collection = db["user"]
 
 
 # 함수 실행
 predict_movie_genres(item_collection, user_collection, ALL_GENRES)
-

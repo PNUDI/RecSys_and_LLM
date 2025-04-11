@@ -1,6 +1,8 @@
 __pycache__
 .venv
 .env
+.env.docker
+.env.gpu-docker
 .vscode
 recsys_and_llm/ml/models/Phi4/llm_predictions.txt
 recsys_and_llm/data/crawling/raw/*
