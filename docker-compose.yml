@@ -3,12 +3,13 @@ version: '3.9'
 services:
   recsys-app:
     build: .
+    network_mode: host
     image: recsys-llm
-    ports:
-      - "8000:8000"
-      - "8501:8501"
+    # ports:
+    #   - "8000:8000"
+    #   - "8501:8501"
     env_file:
-      - .env
+      - .env.gpu-docker
     deploy:
       resources:
         reservations:
