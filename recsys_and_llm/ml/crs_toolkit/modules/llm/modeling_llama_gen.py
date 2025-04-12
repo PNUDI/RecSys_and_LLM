@@ -2,6 +2,7 @@ import logging
 import os
 from typing import List, Union
 
+
 import openai
 from crs_toolkit import BaseModule
 from crs_toolkit.modules.monitor import monitor
@@ -40,6 +41,12 @@ class LlamaGen(BaseModule):
         self.model = AutoModelForCausalLM.from_pretrained(model_name)
         self.prompt = config.prompt if prompt is None else prompt
         self.debug = debug
+        self.tokenizer = self.get_tokenizer(model_name)
+
+        # 커스텀 토큰 추가
+        special_tokens_dict = {'additional_special_tokens': ['<movie>']}
+        self.tokenizer.add_special_tokens(special_tokens_dict)
+        self.model.resize_token_embeddings(len(self.tokenizer))
 
     @classmethod
     def from_pretrained(
@@ -91,7 +98,6 @@ class LlamaGen(BaseModule):
         self,
         raw_input,
         tokenizer,
-        recs: List[str] = None,
         max_tokens=None,
         temperature=0.5,
         model_name=None,
@@ -114,39 +120,50 @@ class LlamaGen(BaseModule):
             str: The template to response the processed user's input.
         """
 
-        """ LLama format Reference:
-            <s>[INST] <<SYS>>
-                {{ system_prompt }}
-                <</SYS>>
-            {{ user_msg_1 }} [/INST] {{ model_answer_1 }} </s><s>[INST] {{ user_msg_2 }} [/INST]
-        """
+        if tokenizer.pad_token_id is None:
+            tokenizer.pad_token = tokenizer.eos_token
 
-        # Add prompt at end
-        # suppose the last input is the user's input
-        prompt = self.prompt.copy()
-        if recs is not None:
-            formatted_movies = ", ".join(
-                [f'{i + 1}. "{movie}"' for i, movie in enumerate(recs)]
-            )
-            prompt["content"] = prompt["content"].format(formatted_movies)
-        raw_input += f"<<SYS>>{prompt['content']}<</SYS>>"
+        prompt_dict = self.prompt.copy()  # {'role': 'system', 'content': '...'}
+        system_str = prompt_dict.get('content', '')
+        
+        # Llama 형식의 프롬프트 생성 (Llama 3 양식 기준)
+        # <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+        # system 텍스트
+        # <|start_header_id|>user<|end_header_id|>
+        # 사용자 입력 <|eot_id|>
 
-        encodings = tokenizer(raw_input, return_tensors="pt", padding=True)
+        final_input = (
+            f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n"
+            f"{system_str}\n"
+            f"<|start_header_id|>user<|end_header_id|>\n"
+            f"{raw_input}<|eot_id|>"
+        )
+
+        tokenizer.pad_token = tokenizer.eos_token
+        encodings = tokenizer(final_input, return_tensors="pt", padding=True)
         encodings = DeviceManager.copy_to_device(encodings, self.model.device)
+        # encoding decode 테스트 해보기
+        # print(tokenizer.decode(encodings['input_ids'][0], skip_special_tokens=True))
+
+        max_tokens = max_tokens or 512
 
         res = self.model.generate(
             **encodings,
             max_new_tokens=max_tokens,
             temperature=temperature,
             eos_token_id=tokenizer.eos_token_id,
+            pad_token_id=tokenizer.pad_token_id,
         )
-        decoded_text = tokenizer.decode(res[0], skip_special_tokens=True)
-        resp_start = decoded_text.rfind("[/INST]") + len("[/INST]")
-        resp = decoded_text[resp_start:].strip(" ")
-        output = "System: {}".format(resp)
-        if return_dict:
-            return {
-                "input": raw_input,
-                "output": output,
-            }
-        return output
+        generated_tokens = res[0][encodings['input_ids'].shape[-1]:]
+        # print(f"Response: {res}")
+        # print()
+        # # decode only the first sequence to avoid list interpretation error
+        # print(tokenizer.decode(generated_tokens, skip_special_tokens=True))
+        # print()
+        
+        decoded_text = tokenizer.decode(generated_tokens, skip_special_tokens=True)
+        # "System:" 구문 제거, <movie>가 포함된 문장만 최대 3개 추출
+        lines = decoded_text.split('\n')
+        lines = [line for line in lines if "<movie>" in line]
+        final_text = '\n'.join(lines)
+        return final_text
