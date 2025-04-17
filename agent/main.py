@@ -1,10 +1,12 @@
 import os
+import sys
 
 import numpy as np
 import wandb
 from parse import parse_args
 from tqdm import tqdm
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from agent.simulation.arena import Arena
 from agent.simulation.avatar import Avatar
 from agent.simulation.utils import fix_seeds

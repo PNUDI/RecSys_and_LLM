@@ -4,6 +4,7 @@ import random
 import re
 import sys
 from argparse import Namespace
+from collections import Counter
 
 import torch
 from dotenv import load_dotenv
@@ -14,6 +15,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import pandas as pd
 
 from recsys_and_llm.backend.app.config import ALL_GENRES
+from recsys_and_llm.backend.app.inference import (
+    genre_inference,
+    inference,
+    item_content_inference,
+)
 from recsys_and_llm.ml.models.model_manager import ModelManager
 from recsys_and_llm.ml.utils import (
     calculate_genre_distribution,
@@ -62,8 +68,10 @@ class abstract_arena:
         self.load_saved_args(self.model_path)
         self.prepare_dir()
         self.load_data()
-        self.load_recommender()
+        self.load_recommender_and_db()
         self.initialize_all_avatars()
+        self.get_block_recommendations()
+
         self.get_full_rankings()
         self.load_additional_info()
         if self.val_users:
@@ -141,7 +149,7 @@ class abstract_arena:
             f"datasets/{self.dataset}/simulation/movie_detail.csv"
         )
 
-    def load_recommender_legacy(self):
+    def load_recommender(self):
         """
         load the recommender for simulation
         """
@@ -201,12 +209,15 @@ class abstract_arena:
             )  # restore the checkpoint
         # self.model, self.loading_epoch = restore_checkpoint(self.model, self.model_path, self.device) # restore the checkpoint
 
-    def load_recommender(self):
+    def load_recommender_and_db(self):
         load_dotenv()
         client = MongoClient(os.getenv("MONGO_URI"))
         db = client[os.getenv("DB_NAME")]
         user_collection = db["user"]
         item_collection = db["item"]
+
+        self.user_collection = user_collection
+        self.item_collection = item_collection
 
         # 모델 사용 데이터 파싱
         cold_items = find_cold(user_collection, 50)
@@ -220,13 +231,7 @@ class abstract_arena:
 
         # 모델 로드
         model_manager = ModelManager(data)
-
-        if self.args.modeltype != "Random" and self.args.modeltype != "Pop":
-            print("loading checkpoint")
-            self.model, self.loading_epoch = restore_checkpoint(
-                self.model, self.model_path, self.device
-            )  # restore the checkpoint
-        # self.model, self.loading_epoch = restore_checkpoint(self.model, self.model_path, self.device) # restore the checkpoint
+        self.model_manager = model_manager
 
     def get_full_rankings(self, filename="full_rankings", batch_size=512):
         """
@@ -294,15 +299,128 @@ class abstract_arena:
 
         print("finish get full rankings")
 
+    def prepare_batch_inputs(self, user_data_list, model_manager):
+        """
+        여러 유저 데이터를 받아 inference 함수에 넣을 수 있는 형식으로 변환.
+        """
+        inputs = []
+
+        for user_data in user_data_list:
+            user_id = user_data["_id"]
+            seq = [item["itemnum"] for item in user_data.get("items", [])]
+            seq_time = [
+                (item["itemnum"], item["unixReviewTime"])
+                for item in user_data.get("items", [])
+            ]
+
+            # 유저의 시청 장르 추출
+            watched_genres = [
+                genre
+                for item in user_data["items"]
+                if "predicted_genre" in item
+                for genre in item["predicted_genre"]
+            ]
+            user_genre_counts = Counter(watched_genres)
+            genre = genre_inference(model_manager, user_genre_counts)
+
+            # 해당 장르에 속하는 아이템 ID 목록
+            genre_movie_ids = [
+                int(movie["_id"])
+                for movie in self.item_collection.find(
+                    {"predicted_genre": genre}, {"_id": 1}
+                )
+            ]
+
+            inputs.append(
+                {
+                    "user_id": user_id,
+                    "seq": seq,
+                    "seq_time": seq_time,
+                    "genre_movie_ids": genre_movie_ids,
+                }
+            )
+
+        return inputs
+
+    def get_block_recommendations(self, filename="full_rankings", batch_size=512):
+        """
+        document the full rankings of the items,
+        according to a specific cf model
+        """
+        # if(os.path.exists(self.storage_base_path + '/{}_{}.npy'.format(filename, self.n_avatars))):
+        #     print("loading full rankings from storage")
+        #     self.full_rankings = np.load(self.storage_base_path + '/{}_{}.npy'.format(filename, self.n_avatars))
+        #     print("finish loading full rankings")
+        #     print(type(self.full_rankings))
+        # else:
+        # dump_dict = merge_user_list([self.data.train_user_list,self.data.valid_user_list])
+        print("nodrop?", self.data.nodrop)
+        # @ Use valid data for simulation.
+        if self.data.nodrop:
+            dump_dict = merge_user_list(
+                [self.data.train_nodrop_user_list, self.data.test_user_list]
+            )
+        else:
+            dump_dict = merge_user_list(
+                [self.data.train_user_list, self.data.test_user_list]
+            )
+        # dump_dict = merge_user_list([self.data.train_user_list, self.data.test_user_list])
+
+        user_data_list = list(
+            self.user_collection.find({"_id": {"$in": self.simulated_avatars_id}})
+        )
+        model_inputs = self.prepare_batch_inputs(user_data_list, self.model_manager)
+        # 결과 저장 딕셔너리 초기화
+        self.block_recommendations = {}
+
+        for input_data in model_inputs:
+            res = inference(
+                self.model_manager,
+                input_data["user_id"],
+                input_data["seq"],
+                input_data["seq_time"],
+                input_data["genre_movie_ids"],
+            )
+            self.block_recommendations[input_data["user_id"]] = {
+                "top_pick": res["allmrec_prediction"],  # 1개
+                "personalized": res["gsasrec_prediction"],  # 8개
+                "recent": res["tisasrec_prediction"],  # 8개
+                "genre": res["genrerec_prediction"],  # 8개
+            }
+
+        print("finish block recommendations")
+        breakpoint()
+
+        # self.full_rankings = np.argsort(-score_matrix, axis=1)
+        # if self.rec_gt:
+        #     # for user in self.simulated_avatars_id:
+        #     #     for idx, item in enumerate(self.data.train_user_list[user]):
+        #     #         self.full_rankings[user][idx] = item
+        #     gt_dict = pd.read_pickle("scripts/user_ground_truth.pkl")
+        #     for user in self.simulated_avatars_id:
+        #         for idx, item in enumerate(gt_dict[user]):
+        #             self.full_rankings[user][idx] = item
+        # np.save(
+        #     self.storage_base_path
+        #     + "/rankings/"
+        #     + "/{}_{}.npy".format(filename, self.n_avatars),
+        #     self.full_rankings,
+        # )
+
+        print("finish get full rankings")
+
     def initialize_all_avatars(self):
         """
         initialize all avatars
         """
+        self.simulated_avatars_id = list(map(str, range(1, self.n_avatars + 1)))
+
         # all_avatars = sorted(list(self.data.test_user_list.keys()))
         # self.simulated_avatars_id = all_avatars[:self.n_avatars]
-        self.simulated_avatars_id = list(range(self.n_avatars))
-        # print('simulated avatars', self.simulated_avatars_id)
+        # random.seed(self.args.seed)
         # self.simulated_avatars_id = sorted(random.sample(all_avatars, self.n_avatars))
+
+        print("simulated avatars", self.simulated_avatars_id)
 
     def page_generator(self):
         """

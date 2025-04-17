@@ -56,7 +56,9 @@ class Arena(abstract_arena):
         initialize avatars
         """
         super().initialize_all_avatars()
-        # self.persona_df = pd.read_csv(f"datasets/{self.dataset}/simulation/all_personas_like_information_house.csv")
+        self.persona_df = pd.read_csv(
+            f"datasets/{self.dataset}/simulation/all_personas_like_information_house.csv"
+        )
         self.persona_df = pd.read_csv(
             f"datasets/{self.dataset}/simulation/all_personas_like_modify.csv"
         )
