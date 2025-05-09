@@ -6,7 +6,6 @@ import torch
 from huggingface_hub import hf_hub_download
 from transformers import pipeline
 
-
 from recsys_and_llm.ml.models.ALLMRec.a_llmrec_model import A_llmrec_model
 from recsys_and_llm.ml.models.gSASRec.gsasrec_inference import build_model
 from recsys_and_llm.ml.models.TiSASRec.TiSASRec_inference import TiSASRec
@@ -15,29 +14,23 @@ from recsys_and_llm.ml.models.TiSASRec.TiSASRec_inference import TiSASRec
 class ModelLoader:
     def __init__(self, llmrec_args):
         self.llmrec_args = llmrec_args
-        self.allmrec_model = None
-        self.tisasrec_model = None
-        self.gsasrec_model = None
-        self.genrerec_model = None
-
         self.tisasrec_args = None
         self.gsasrec_args = None
 
-        self._load_models()
-
-    def _load_allmrec(self):
+    @property
+    def _load_allmrec(self):  # cuda:0
         """ALLMRec 모델 로드 및 초기화"""
-        self.allmrec_model = A_llmrec_model(self.llmrec_args).to(
-            self.llmrec_args.device
-        )
+        allmrec_model = A_llmrec_model(self.llmrec_args).to(self.llmrec_args.device)
         phase1_epoch = 10
         phase2_epoch = 10
-        self.allmrec_model.load_model(
+        allmrec_model.load_model(
             self.llmrec_args, phase1_epoch=phase1_epoch, phase2_epoch=phase2_epoch
         )
-        self.allmrec_model.eval()
+        allmrec_model.eval()
+        return allmrec_model
 
-    def _load_tisasrec(self):
+    @property
+    def _load_tisasrec(self):  # auto
         """TiSASRec 모델 로드"""
         repo_id = "PNUDI/TiSASRec"
         model_file = hf_hub_download(
@@ -49,18 +42,20 @@ class ModelLoader:
         with open(config_file, "r") as f:
             config_data = json.load(f)
         self.tisasrec_args = argparse.Namespace(**config_data)
-        self.tisasrec_model = TiSASRec(
+        tisasrec_model = TiSASRec(
             self.tisasrec_args.usernum,
             self.tisasrec_args.itemnum,
             self.tisasrec_args.itemnum,
             self.tisasrec_args,
         ).to(self.tisasrec_args.device)
-        self.tisasrec_model.load_state_dict(
+        tisasrec_model.load_state_dict(
             torch.load(model_file, map_location=self.tisasrec_args.device)
         )
-        self.tisasrec_model.eval()
+        tisasrec_model.eval()
+        return tisasrec_model
 
-    def _load_gsasrec(self):
+    @property
+    def _load_gsasrec(self):  # cuda:0
         """gSASRec 모델 로드"""
         repo_id = "PNUDI/gSASRec"
         model_file = hf_hub_download(
@@ -72,13 +67,15 @@ class ModelLoader:
         with open(config_file, "r") as f:
             config_data = json.load(f)
         self.gsasrec_args = argparse.Namespace(**config_data)
-        self.gsasrec_model = build_model(self.gsasrec_args)
-        self.gsasrec_model.load_state_dict(torch.load(model_file, map_location="cpu"))
-        self.gsasrec_model.eval()
+        gsasrec_model = build_model(self.gsasrec_args)
+        gsasrec_model.load_state_dict(torch.load(model_file, map_location="cpu"))
+        gsasrec_model.eval()
+        return gsasrec_model
 
+    @property
     def _load_contentrec(self):
         """모델 로드"""
-        self.item_contents_emb = torch.load(
+        item_contents_emb = torch.load(
             hf_hub_download(
                 repo_id="PNUDI/Item_based",
                 filename="item_text_emb_SB.pt",
@@ -86,30 +83,14 @@ class ModelLoader:
             ),
             weights_only=False,
         )
+        return item_contents_emb
 
-    def _load_genrerec(self):
-        self.genrerec_model = pipeline(
+    @property
+    def _load_genrerec(self):  # auto
+        genrerec_model = pipeline(
             "text-generation",
             model="unsloth/phi-4-unsloth-bnb-4bit",
             model_kwargs={"torch_dtype": "auto"},
             device_map="auto",
         )
-
-    def _load_models(self):
-        self._load_allmrec()
-        self._load_tisasrec()
-        self._load_gsasrec()
-        self._load_contentrec()
-        self._load_genrerec()
-
-
-    def get_models(self):
-        return {
-            "allmrec_model": self.allmrec_model,
-            "tisasrec_model": self.tisasrec_model,
-            "gsasrec_model": self.gsasrec_model,
-            "contentrec_model": self.item_contents_emb,
-            "genrerec_model": self.genrerec_model,
-            "tisasrec_args": self.tisasrec_args,
-            "gsasrec_args": self.gsasrec_args,
-        }
+        return genrerec_model
