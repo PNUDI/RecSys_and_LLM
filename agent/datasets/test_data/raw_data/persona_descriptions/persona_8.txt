@@ -1,0 +1,5 @@
+TASTE: Classic Film Enthusiast
+REASON: User consistently rates classic movies from various countries and genres highly, such as Nosferatu, Diabolique, and Nights of Cabiria.
+
+TASTE: Sci-Fi and Fantasy Fan
+REASON: User shows a strong preference for sci-fi and fantasy movies, evident from high ratings for Star Trek, Star Trek XI, and Raising Arizona.

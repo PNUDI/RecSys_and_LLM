@@ -1,0 +1,25 @@
+/* recsys_and_llm/front/assets/styles.css */
+
+/* 상단 버튼 스타일 */
+.top-right-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-top: -3rem;
+    margin-bottom: 1rem;
+}
+
+/* 사용자 메시지 재정렬: 아이콘(아바타)와 텍스트의 순서를 반전 */
+/* stChatMessage 컨테이너 중 내부에 aria-label="Chat message from user"가 있는 경우 */
+[data-testid="stChatMessage"]:has([aria-label="Chat message from user"]) {
+    display: flex;
+    flex-direction: row-reverse !important;
+    align-items: center;
+}
+
+/* 사용자 메시지 내용은 왼쪽 정렬 */
+[data-testid="stChatMessage"]:has([aria-label="Chat message from user"]) [data-testid="stChatMessageContent"] {
+    text-align: right !important;
+    flex: 1;
+}

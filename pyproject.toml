@@ -1,0 +1,51 @@
+[project]
+name = "recsys-and-llm"
+version = "0.1.0"
+description = "movie recommendation web page"
+authors = [
+    {name = "Jun Seo",email = "sjin4861@pusan.ac.kr"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = "<4.0, >=3.10.0"
+dependencies = [
+    "streamlit (>=1.41.1,<2.0.0)",
+    "torch (>=2.5.1,<3.0.0)",
+    "pyparsing (>=3.2.1,<4.0.0)",
+    "ipykernel (>=6.29.5,<7.0.0)",
+    "chardet (>=5.2.0,<6.0.0)",
+    "python-dotenv (>=1.0.1,<2.0.0)",
+    "loguru (>=0.7.3,<0.8.0)",
+    "h5py (>=3.12.1,<4.0.0)",
+    "pymongo (>=4.11,<5.0)",
+    "dnspython (>=2.7.0,<3.0.0)",
+    "argparse (>=1.4.0,<2.0.0)",
+    "tqdm (>=4.67.1,<5.0.0)",
+    "fastapi (>=0.115.8,<0.116.0)",
+    "uvicorn (>=0.34.0,<0.35.0)",
+    "accelerate (>=1.3.0,<2.0.0)",
+    "bitsandbytes (>=0.45.2,<0.46.0)",
+    "recbole (>=1.2.0,<2.0.0)",
+    "kmeans-pytorch (>=0.3,<0.4)",
+    "streamlit-searchbox (>=0.1.20,<0.2.0)",
+    "st-star-rating (>=0.0.6,<0.0.7)",
+    "transformers (>=4.49.0,<5.0.0)",
+    "sentence-transformers (>=3.4.1,<4.0.0)",
+    "openai (>=1.63.2,<2.0.0)",
+    "numpy (>=2.2.3,<3.0.0)",
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
+pre-commit = "^4.1.0"
+pytest = "^8.3.4"
+isort = "^5.13.2"
+asttokens = "^3.0.0"
+
+[tool.isort]
+profile = "black"

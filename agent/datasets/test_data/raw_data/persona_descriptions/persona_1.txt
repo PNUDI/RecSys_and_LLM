@@ -1,0 +1,5 @@
+TASTE: Drama enthusiast
+REASON: User consistently rates products with genres like Drama, Biography, and Romance highly.
+
+TASTE: Crime and thriller lover
+REASON: User shows a strong preference for products categorized under Crime, Thriller, and Mystery genres.

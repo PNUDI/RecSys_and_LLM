@@ -1,0 +1,4 @@
+pymongo==4.10.1
+dnspython==2.6.1
+argparse
+tqdm

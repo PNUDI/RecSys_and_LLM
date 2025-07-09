@@ -1,0 +1,14 @@
+__pycache__
+.venv
+.env
+.env.docker
+.env.gpu-docker
+.vscode
+recsys_and_llm/ml/models/Phi4/llm_predictions.txt
+recsys_and_llm/data/crawling/raw/*
+agent/datasets/test_data/raw_data/movie_details.json
+agent/datasets/test_data/simulation/item_detail.csv
+
+
+recsys_and_llm/ml/models/Phi4/unsloth_compiled_cache/
+recsys_and_llm/ml/models/Phi4/cleaned_imdb_genre.csv

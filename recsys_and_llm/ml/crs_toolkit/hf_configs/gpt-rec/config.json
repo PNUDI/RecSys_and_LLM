@@ -1,0 +1,17 @@
+{
+  "WEIGHT_DIMENSIONS": {},
+  "_attn_implementation_autoset": true,
+  "answer_mask": "<movie>",
+  "answer_type": "movie",
+  "backup_prompt": {
+    "content": " Your previous response is a a template with some <movie> mask. Now please fill in with actual names of movie. Your answer should be formatted as a string separated by comma. For example if there are three <movie> in the template, and you want to fill them with \"Inception\", \"The Matrix\", and \"The Dark Knight\", then your answer should be formatted as: \"\"\"Inception,The Matrix,The Dark Knight\"\"\" Do not include anything except the formatted string.",
+    "role": "system"
+  },
+  "max_gen_len": 0,
+  "model_name": "gpt-4o",
+  "prompt": {
+    "content": " Your previous response is a a template with some <movie> mask. Now please fill in with actual names of movie. Your answer should be formatted as a json object with a link to the movies wiki page  so that it could be directly parsed. For example if there are two <movie> in the template, and you want to fill them with \"Inception\" and \"The Matrix\", then your answer should be formatted as follows: [{\"name\": \"Inception\", \"uri\": \"https://en.wikipedia.org/wiki/Inception\"}, {\"name\": \"The Matrix\", \"uri\": \"https://en.wikipedia.org/wiki/The_Matrix\"}] The returned object should has the same number of movie as in your previous response. Do not include anything outside the json object.",
+    "role": "system"
+  },
+  "transformers_version": "4.49.0"
+}
